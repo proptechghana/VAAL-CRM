@@ -1,0 +1,6 @@
+{
+  "name": "VAAL CRM Dashboard",
+  "description": "A lead qualification and scheduled calls dashboard for VAAL Real Estate Ghana.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
