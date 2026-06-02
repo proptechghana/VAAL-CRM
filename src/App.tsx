@@ -133,7 +133,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="mb-6 h-[400px]">
+                    <div className="mb-6 h-[280px] sm:h-[360px] lg:h-[400px]">
                       <ChartArea data={monthsData} />
                     </div>
 
