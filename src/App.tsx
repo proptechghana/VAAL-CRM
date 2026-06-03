@@ -179,8 +179,8 @@ export default function App() {
            </div>
         </div>
         
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 custom-scrollbar">
-          <div className="max-w-7xl mx-auto xl:px-4">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 custom-scrollbar">
+          <div className="max-w-7xl mx-auto px-0 xl:px-4 w-full">
             {currentView !== 'dashboard' && (
               <div className="hidden lg:block">
                 <TopBar searchQuery={searchQuery} onSearchQueryChange={setSearchQuery} />
@@ -199,7 +199,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="mb-6 h-[400px]">
+                    <div className="mb-6 h-[280px] sm:h-[360px] lg:h-[400px]">
                       <ChartArea yearData={monthsData} monthData={currentMonthData} />
                     </div>
 
