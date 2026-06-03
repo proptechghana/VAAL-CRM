@@ -20,7 +20,7 @@ export function Sidebar({ className, currentView, onViewChange }: { className?: 
                      <div className="w-4 h-4 rounded-full bg-[#D4A72C] opacity-60" />
                      <div className="w-4 h-4 rounded-full bg-[#D4A72C] opacity-30" />
                 </div>
-                <span className="text-xl font-semibold text-gray-900 tracking-tight">VAAL CRM</span>
+                <span className="text-xl font-semibold text-gray-900 tracking-tight">VAAL REAL ESTATE AGENCY</span>
             </div>
 
             <nav className="flex-1 space-y-2">

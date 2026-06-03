@@ -1,26 +1,21 @@
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ChevronDown } from 'lucide-react';
 
 export interface ChartData {
   name: string;
   budget: number;
+  budgets?: Record<string, number>;
   leads: number;
 }
 
-export function ChartArea({ data }: { data: ChartData[] }) {
-  // Empty state handler
-  const baseData = data.length > 0 ? data : [
-    { name: 'Jan', budget: 0, leads: 0 },
-    { name: 'Feb', budget: 0, leads: 0 },
-    { name: 'Mar', budget: 0, leads: 0 },
-    { name: 'Apr', budget: 0, leads: 0 },
-    { name: 'May', budget: 0, leads: 0 },
-    { name: 'Jun', budget: 0, leads: 0 },
-    { name: 'Jul', budget: 0, leads: 0 },
-    { name: 'Aug', budget: 0, leads: 0 },
-    { name: 'Sep', budget: 0, leads: 0 },
-    { name: 'Oct', budget: 0, leads: 0 },
-    { name: 'Nov', budget: 0, leads: 0 },
-    { name: 'Dec', budget: 0, leads: 0 },
+export function ChartArea({ yearData, monthData }: { yearData: ChartData[], monthData: ChartData[] }) {
+  const [timeframe, setTimeframe] = useState<'year' | 'month'>('month');
+
+  const dataToUse = timeframe === 'year' ? yearData : monthData;
+
+  const baseData = dataToUse.length > 0 ? dataToUse : [
+    { name: 'No Data', budget: 0, leads: 0 },
   ];
 
   const maxBudget = Math.max(...baseData.map(d => d.budget), 1);
@@ -34,10 +29,25 @@ export function ChartArea({ data }: { data: ChartData[] }) {
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
-      const rawData = payload[0].payload;
+      const rawData = payload[0].payload as ChartData;
+      
+      const formatCurrency = (amount: number, symbol: string) => {
+          return `${symbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      };
+
       return (
         <div className="bg-white px-4 py-3 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3]">
-          <p className="font-semibold text-gray-900 text-lg">${rawData.budget.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          {rawData.budgets && Object.keys(rawData.budgets).length > 0 ? (
+             Object.entries(rawData.budgets).map(([symbol, amount]) => (
+                <p key={symbol} className="font-semibold text-gray-900 text-lg">
+                   {formatCurrency(amount, symbol)}
+                </p>
+             ))
+          ) : (
+             <p className="font-semibold text-gray-900 text-lg">
+                {formatCurrency(rawData.budget, '$')}
+             </p>
+          )}
           <p className="text-[13px] font-medium text-gray-500 mt-0.5">Leads: {rawData.leads}</p>
         </div>
       );
@@ -60,6 +70,17 @@ export function ChartArea({ data }: { data: ChartData[] }) {
                 Leads
              </div>
           </div>
+        </div>
+        <div className="relative">
+          <select 
+            value={timeframe} 
+            onChange={(e) => setTimeframe(e.target.value as 'year' | 'month')}
+            className="appearance-none bg-[#FAF8F3] text-gray-700 text-sm font-medium py-2 pl-4 pr-10 rounded-lg outline-none cursor-pointer border border-[#F3F3F3]"
+          >
+            <option value="year">This Year</option>
+            <option value="month">This Month</option>
+          </select>
+          <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
@@ -84,7 +105,7 @@ export function ChartArea({ data }: { data: ChartData[] }) {
             />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#F0F0F0', strokeWidth: 1 }} />
             <Line 
-              type="monotone" 
+              type="linear" 
               dataKey="budgetPercent" 
               stroke="#D4A72C" 
               strokeWidth={3}
@@ -92,7 +113,7 @@ export function ChartArea({ data }: { data: ChartData[] }) {
               activeDot={{ r: 6, strokeWidth: 0, fill: '#D4A72C' }}
             />
             <Line 
-              type="monotone" 
+              type="linear" 
               dataKey="leadsPercent" 
               stroke="#F28C28" 
               strokeWidth={3}
