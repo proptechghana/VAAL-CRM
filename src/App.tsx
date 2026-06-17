@@ -212,8 +212,6 @@ export default function App() {
                         <div className="h-[280px] sm:h-[300px] lg:h-[400px]">
                           <ChartArea yearData={monthsData} monthData={currentMonthData} />
                         </div>
-
-                        <RecentLeads leads={recentLeads} title="Recent Leads" />
                     </div>
                 )}
 
