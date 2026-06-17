@@ -92,12 +92,12 @@ export function ChartArea({ yearData, monthData }: { yearData: ChartData[], mont
           <select
             value={timeframe}
             onChange={(e) => setTimeframe(e.target.value as 'year' | 'month')}
-            className="appearance-none bg-white text-gray-700 text-xs sm:text-sm font-medium py-2 pl-3 pr-8 rounded-xl outline-none cursor-pointer border border-[#E5E7EB] hover:border-gray-300 transition-colors shadow-sm min-h-[36px]"
+            className="appearance-none bg-[#f8f6f0] text-gray-700 text-xs sm:text-sm font-semibold py-1.5 pl-3 pr-7 rounded-lg outline-none cursor-pointer border-0 focus:ring-2 focus:ring-[#D4A72C]/30 transition-all"
           >
             <option value="year">This Year</option>
             <option value="month">This Month</option>
           </select>
-          <ChevronDown className="w-3.5 h-3.5 text-gray-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <ChevronDown className="w-3 h-3 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 

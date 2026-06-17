@@ -21,62 +21,32 @@ export function CalendarView({ leads }: { leads: LeadData[] }) {
         >
             <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h2 className="text-lg sm:text-xl font-medium text-gray-900 tracking-tight">Scheduled Calls</h2>
+                <span className="text-xs font-medium text-gray-400">{bookedLeads.length} scheduled</span>
             </div>
 
             {bookedLeads.length === 0 ? (
-                <p className="p-6 text-center text-gray-500 text-sm">No scheduled calls found.</p>
+                <p className="py-10 text-center text-gray-400 text-sm">No scheduled calls found.</p>
             ) : (
-                <>
-                    {/* Mobile card list — visible below sm */}
-                    <div className="sm:hidden space-y-3">
-                        {bookedLeads.map((lead) => (
-                            <div
-                                key={lead.id}
-                                className="bg-[#faf8f3] rounded-xl p-4 border border-[#f0ece1]"
-                            >
-                                <p className="font-semibold text-gray-900 text-sm mb-1">{lead.name}</p>
-                                <p className="text-xs text-gray-500 mb-2">{lead.property}</p>
-                                <div className="flex items-center gap-1.5 text-xs text-[#D4A72C] font-medium">
+                <div className="space-y-3">
+                    {bookedLeads.map((lead) => (
+                        <motion.div
+                            key={lead.id}
+                            whileHover={{ scale: 1.005 }}
+                            className="bg-[#faf8f3] rounded-xl p-4 border border-[#f0ece1] cursor-pointer transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.05)]"
+                        >
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0 flex-1">
+                                    <p className="font-semibold text-gray-900 text-sm leading-snug">{lead.name}</p>
+                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{lead.property}</p>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#D4A72C] whitespace-nowrap shrink-0 pt-0.5">
                                     <CalendarIcon className="w-3.5 h-3.5 shrink-0" />
                                     <span>{lead.scheduledFor}</span>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Desktop table — visible from sm up */}
-                    <div className="hidden sm:block overflow-x-auto custom-scrollbar">
-                        <table className="w-full text-left border-collapse min-w-[500px]">
-                            <thead>
-                                <tr className="bg-[#f8f6f0] text-gray-600 text-xs font-semibold tracking-wide border-b border-[#ebdcb3]/30">
-                                    <th className="p-3 sm:p-4 whitespace-nowrap rounded-tl-2xl">Lead Name</th>
-                                    <th className="p-3 sm:p-4 whitespace-nowrap">Property Interest</th>
-                                    <th className="p-3 sm:p-4 whitespace-nowrap rounded-tr-2xl">Scheduled For</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-sm font-medium text-gray-800 divide-y divide-[#f0ece1]/50">
-                                {bookedLeads.map((lead) => (
-                                    <motion.tr
-                                        key={lead.id}
-                                        whileHover={{ backgroundColor: 'rgba(249,250,251,1)' }}
-                                        className="transition-colors group cursor-pointer"
-                                    >
-                                        <td className="p-3 sm:p-4 font-medium text-gray-900 group-hover:text-[#D4A72C] transition-colors whitespace-nowrap">
-                                            {lead.name}
-                                        </td>
-                                        <td className="p-3 sm:p-4 text-gray-600 group-hover:text-gray-900 transition-colors">{lead.property}</td>
-                                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2 group-hover:text-gray-900 transition-colors">
-                                                <CalendarIcon className="w-4 h-4 text-gray-400 group-hover:text-[#D4A72C] transition-colors shrink-0" />
-                                                <span>{lead.scheduledFor}</span>
-                                            </div>
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </>
+                        </motion.div>
+                    ))}
+                </div>
             )}
         </motion.div>
     );
