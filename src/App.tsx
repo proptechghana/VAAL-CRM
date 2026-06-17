@@ -7,6 +7,7 @@ import { RecentLeads } from '@/components/RecentLeads';
 import { CalendarView } from '@/components/CalendarView';
 import type { LeadData, StatData } from '@/types';
 import { Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   const [leads, setLeads] = useState<LeadData[]>([]);
@@ -36,15 +37,15 @@ export default function App() {
     fetchLiveLeads();
   }, []);
 
-  const validLeads = leads.filter(l => l.Name);
+  // Support both "Name" and "Full Name" key changes from the API
+  const validLeads = leads.filter(l => l.Name || l["Full Name"]);
   const totalLeads = validLeads.length;
 
-  const recentLeads24h = validLeads.filter(l => {
-      if (!l["Log Date"]) return false;
-      const logDateMs = new Date(l["Log Date"]).getTime();
-      const nowMs = new Date().getTime();
-      return (nowMs - logDateMs) <= 24 * 60 * 60 * 1000;
-  });
+  const recentLeads = [...validLeads].sort((a, b) => {
+      const timeA = a["Log Date"] ? new Date(a["Log Date"]).getTime() : 0;
+      const timeB = b["Log Date"] ? new Date(b["Log Date"]).getTime() : 0;
+      return timeB - timeA;
+  }).slice(0, 10);
 
   const budgetTotals: Record<string, number> = {};
 
@@ -55,7 +56,7 @@ export default function App() {
           if (match) {
              const budgetVal = parseFloat(match[0].replace(/,/g, ''));
              let currSymbol = budgetStr.replace(/[\d,\.\s-]/g, '').trim();
-             if (!currSymbol) currSymbol = '$';
+             if (!currSymbol) currSymbol = 'GH₵';
              budgetTotals[currSymbol] = (budgetTotals[currSymbol] || 0) + budgetVal;
           }
       }
@@ -65,12 +66,12 @@ export default function App() {
     .filter(([_, val]) => val > 0)
     .map(([cur, val]) => `${cur}${val.toLocaleString()}`);
   
-  const budgetFormatted = formattedBudgets.length > 0 ? formattedBudgets.join(' | ') : '$0';
+  const budgetFormatted = formattedBudgets.length > 0 ? formattedBudgets.join(' | ') : 'GH₵0';
 
   const stats: StatData[] = [
     { title: 'Total Budget', value: budgetFormatted, trend: 0, trendUp: true, type: 'budget' },
     { title: 'Total Leads', value: String(totalLeads), trend: 0, trendUp: true, type: 'leads' },
-    { title: 'New Leads', value: String(recentLeads24h.length), trend: 0, trendUp: true, type: 'leads' },
+    { title: 'New Leads', value: String(recentLeads.length), trend: 0, trendUp: true, type: 'leads' },
   ];
 
   const monthsData = Array.from({ length: 12 }, (_, i) => {
@@ -89,14 +90,14 @@ export default function App() {
   validLeads.forEach(l => {
       let leadVal = 1;
       let budgetVal = 0;
-      let currSymbol = '$';
+      let currSymbol = 'GH₵';
       if (l.Budget && l.Budget !== "Not Specified") {
           const budgetStr = String(l.Budget);
           const match = budgetStr.match(/\d+(?:,\d+)*(?:\.\d+)?/);
           if (match) {
              budgetVal = parseFloat(match[0].replace(/,/g, ''));
              currSymbol = budgetStr.replace(/[\d,\.\s-]/g, '').trim();
-             if (!currSymbol) currSymbol = '$';
+             if (!currSymbol) currSymbol = 'GH₵';
           }
       }
 
@@ -142,7 +143,8 @@ export default function App() {
   const searchedLeads = validLeads.filter(l => {
      if (!searchQuery) return true;
      const q = searchQuery.toLowerCase();
-     return (l.Name && l.Name.toLowerCase().includes(q)) || 
+     const nameToSearch = l["Full Name"] || l.Name || '';
+     return nameToSearch.toLowerCase().includes(q) || 
             (l.Email && l.Email.toLowerCase().includes(q)) || 
             (l.Interest && l.Interest.toLowerCase().includes(q));
   });
@@ -175,49 +177,59 @@ export default function App() {
            </button>
            <div className="flex items-center gap-2">
              <div className="w-3 h-3 rounded-full bg-[#D4A72C]" />
-             <span className="text-lg font-semibold text-gray-900 tracking-tight">VAAL REAL ESTATE AGENCY</span>
+             <span className="text-lg font-semibold text-gray-900 tracking-tight">AKKA KAPPA GHANA</span>
            </div>
         </div>
         
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 custom-scrollbar">
-          <div className="max-w-7xl mx-auto px-0 xl:px-4 w-full">
+          <div className="max-w-7xl mx-auto xl:px-4">
             {currentView !== 'dashboard' && (
-              <div className="hidden lg:block">
+              <div className="mb-6 lg:mb-8">
                 <TopBar searchQuery={searchQuery} onSearchQueryChange={setSearchQuery} />
               </div>
             )}
 
-            {currentView === 'dashboard' && (
-                <>
-                    <div className="mb-8">
-                      <h1 className="text-2xl font-semibold text-gray-900 tracking-tight mb-6">Dashboard Overview</h1>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl">
-                        {stats.map((stat, i) => (
-                          <StatCard key={i} data={stat} />
-                        ))}
-                      </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                {currentView === 'dashboard' && (
+                    <div className="space-y-6">
+                        <div>
+                          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight mb-6">Dashboard Overview</h1>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl">
+                            {stats.map((stat, i) => (
+                              <StatCard key={i} data={stat} />
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="h-[300px] sm:h-[400px]">
+                          <ChartArea yearData={monthsData} monthData={currentMonthData} />
+                        </div>
+
+                        <RecentLeads leads={recentLeads} title="Recent Leads" />
                     </div>
+                )}
 
-                    <div className="mb-6 h-[280px] sm:h-[360px] lg:h-[400px]">
-                      <ChartArea yearData={monthsData} monthData={currentMonthData} />
+                {currentView === 'leads' && (
+                    <div>
+                       <RecentLeads leads={searchedLeads} title="All Leads" />
                     </div>
+                )}
 
-                    <RecentLeads leads={recentLeads24h} title="Recent Leads (Last 24 Hours)" />
-                </>
-            )}
-
-            {currentView === 'leads' && (
-                <div>
-                   <RecentLeads leads={searchedLeads} title="All Leads" />
-                </div>
-            )}
-
-            {currentView === 'calendar' && (
-                <div>
-                    <CalendarView leads={searchedLeads} />
-                </div>
-            )}
+                {currentView === 'calendar' && (
+                    <div>
+                        <CalendarView leads={searchedLeads} />
+                    </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
             
           </div>
         </main>

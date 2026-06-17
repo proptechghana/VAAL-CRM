@@ -1,6 +1,7 @@
 export interface LeadData {
   "Log Date"?: string;
-  Name: string;
+  Name?: string;
+  "Full Name"?: string;
   Email: string;
   Budget: string;
   Interest: string;

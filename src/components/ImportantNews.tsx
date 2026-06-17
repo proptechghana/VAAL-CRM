@@ -3,10 +3,11 @@ import type { LeadData } from '@/types';
 
 export function ImportantNews({ leads }: { leads: LeadData[] }) {
     // Filter leads with some date, or fallback to mock data if empty
-    const scheduledLeads = leads.filter(l => l.Name && l["Date Booked"]).slice(0, 10);
+    const scheduledLeads = leads.filter(l => (l.Name || l["Full Name"]) && l["Date Booked"]).slice(0, 10);
     
     // mapping
     const displayData = scheduledLeads.map((l, i) => {
+        const leadName = l["Full Name"] || l.Name || 'Unknown';
         let timeString = '';
         if (l["Time Booked"]) {
              try {
@@ -17,8 +18,8 @@ export function ImportantNews({ leads }: { leads: LeadData[] }) {
         }
 
         return {
-            id: l.Name || String(i),
-            title: `Follow up with ${l.Name}`,
+            id: leadName || String(i),
+            title: `Follow up with ${leadName}`,
             subtitle: `Interested in ${l.Interest || 'property'}`,
             time: timeString,
             type: 'follow-up'
@@ -37,9 +38,6 @@ export function ImportantNews({ leads }: { leads: LeadData[] }) {
             <div className="flex-1 space-y-4 overflow-y-auto pr-2">
                 {displayData.length > 0 ? displayData.map((item, i) => (
                     <div key={item.id + i} className="flex gap-4 p-3 rounded-2xl hover:bg-[#f8f6f0] transition-colors cursor-pointer group">
-                        <div className="shrink-0 w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                            <User className="w-5 h-5 text-gray-500" />
-                        </div>
                         <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-semibold text-gray-900 truncate">{item.title}</h3>
                             <p className="text-xs text-gray-500 truncate mt-0.5">{item.subtitle}</p>

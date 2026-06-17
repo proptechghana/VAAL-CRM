@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChevronDown } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export interface ChartData {
   name: string;
@@ -18,64 +19,66 @@ export function ChartArea({ yearData, monthData }: { yearData: ChartData[], mont
     { name: 'No Data', budget: 0, leads: 0 },
   ];
 
-  const maxBudget = Math.max(...baseData.map(d => d.budget), 1);
-  const maxLeads = Math.max(...baseData.map(d => d.leads), 1);
-
-  const displayData = baseData.map(d => ({
-    ...d,
-    budgetPercent: (d.budget / maxBudget) * 100,
-    leadsPercent: (d.leads / maxLeads) * 100,
-  }));
+  const displayData = baseData;
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const rawData = payload[0].payload as ChartData;
       
       const formatCurrency = (amount: number, symbol: string) => {
-          return `${symbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+          return `${symbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
       };
 
       return (
-        <div className="bg-white px-4 py-3 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3]">
+        <motion.div 
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="bg-[#FCFBF8] px-5 py-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-[#F3F3F3]"
+        >
           {rawData.budgets && Object.keys(rawData.budgets).length > 0 ? (
              Object.entries(rawData.budgets).map(([symbol, amount]) => (
-                <p key={symbol} className="font-semibold text-gray-900 text-lg">
-                   {formatCurrency(amount, symbol)}
-                </p>
+                <div key={symbol}>
+                  <p className="font-bold text-gray-900 text-xl">
+                     {formatCurrency(amount, symbol)}
+                  </p>
+                </div>
              ))
           ) : (
-             <p className="font-semibold text-gray-900 text-lg">
-                {formatCurrency(rawData.budget, '$')}
-             </p>
+             <div>
+                <p className="font-bold text-gray-900 text-xl">
+                   {formatCurrency(rawData.budget, 'GH₵')}
+                </p>
+             </div>
           )}
-          <p className="text-[13px] font-medium text-gray-500 mt-0.5">Leads: {rawData.leads}</p>
-        </div>
+          <p className="text-[13px] font-medium text-gray-500 mt-1">Target: 15M</p>
+        </motion.div>
       );
     }
     return null;
   };
 
   return (
-    <div className="bg-white p-6 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] h-full flex flex-col">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-6">
-          <h2 className="text-lg font-medium text-gray-900 tracking-tight">Performance Analytics</h2>
-          <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
-             <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#D4A72C]"></span>
-                Budget
+    <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] h-full flex flex-col group transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <h2 className="text-xl font-medium text-gray-900 tracking-tight">Performance Analytics</h2>
+          <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
+             <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#D4A72C]"></span>
+                Revenue
              </div>
-             <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#F28C28]"></span>
+             <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#F28C28]"></span>
                 Leads
              </div>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select 
             value={timeframe} 
             onChange={(e) => setTimeframe(e.target.value as 'year' | 'month')}
-            className="appearance-none bg-[#FAF8F3] text-gray-700 text-sm font-medium py-2 pl-4 pr-10 rounded-lg outline-none cursor-pointer border border-[#F3F3F3]"
+            className="w-full sm:w-auto appearance-none bg-white text-gray-700 text-sm font-medium py-2.5 pl-4 pr-10 rounded-xl outline-none cursor-pointer border border-[#F3F3F3] hover:border-gray-300 transition-colors shadow-sm"
           >
             <option value="year">This Year</option>
             <option value="month">This Month</option>
@@ -84,43 +87,74 @@ export function ChartArea({ yearData, monthData }: { yearData: ChartData[], mont
         </div>
       </div>
 
-      <div className="flex-1 w-full min-h-[200px]">
+      <div className="flex-1 w-full min-h-[200px] mt-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={displayData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+          <AreaChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 25 }}>
+            <defs>
+              <linearGradient id="colorBudget" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#D4A72C" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#D4A72C" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#F28C28" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#F28C28" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
             <XAxis 
               dataKey="name" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 12, fill: '#6b7280' }} 
-              dy={10} 
+              tick={{ fontSize: 13, fill: '#6b7280' }} 
+              dy={15} 
             />
             <YAxis 
+              yAxisId="budget"
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 12, fill: '#6b7280' }} 
-              domain={[0, 100]}
-              ticks={[0, 25, 50, 75, 100]}
-              tickFormatter={(value) => `${value}%`}
+              width={50}
+              tick={{ fontSize: 13, fill: '#6b7280' }} 
+              tickFormatter={(value) => {
+                 if (value === 0) return '0';
+                 if (value >= 1000000) return `${value / 1000000}M`;
+                 return `${value / 1000}k`;
+              }}
+              dx={0}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#F0F0F0', strokeWidth: 1 }} />
-            <Line 
-              type="linear" 
-              dataKey="budgetPercent" 
+            <YAxis 
+              yAxisId="leads"
+              orientation="right"
+              axisLine={false} 
+              tickLine={false} 
+              width={0}
+              hide={true}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#F28C28', strokeWidth: 1.5, strokeDasharray: '3 3' }} />
+            <Area 
+              yAxisId="budget"
+              type="monotone" 
+              dataKey="budget" 
               stroke="#D4A72C" 
+              fillOpacity={1} 
+              fill="url(#colorBudget)"
               strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6, strokeWidth: 0, fill: '#D4A72C' }}
+              activeDot={{ r: 6, strokeWidth: 2, fill: '#fff', stroke: '#D4A72C' }}
+              animationDuration={1500}
+              animationEasing="ease-in-out"
             />
-            <Line 
-              type="linear" 
-              dataKey="leadsPercent" 
+            <Area 
+              yAxisId="leads"
+              type="monotone" 
+              dataKey="leads" 
               stroke="#F28C28" 
+              fillOpacity={1} 
+              fill="url(#colorLeads)"
               strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6, strokeWidth: 0, fill: '#F28C28' }}
+              activeDot={{ r: 6, strokeWidth: 2, fill: '#fff', stroke: '#F28C28' }}
+              animationDuration={1500}
+              animationEasing="ease-in-out"
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

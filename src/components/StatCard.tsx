@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { DollarSign, Users, Phone, Handshake, CheckCircle } from 'lucide-react';
 import type { StatData } from '@/types';
+import { motion } from 'motion/react';
 
 const iconMap = {
     budget: DollarSign,
@@ -24,7 +25,10 @@ export function StatCard({ data }: { data: StatData }) {
     const Icon = iconMap[data.type];
     
     return (
-        <div className="bg-white p-5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3]">
+        <motion.div 
+            whileHover={{ y: -4 }}
+            className="bg-white p-5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+        >
             <div className="flex items-center gap-2 mb-4">
                 <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", colorMap[data.type])}>
                     <Icon className="w-3.5 h-3.5" />
@@ -33,8 +37,8 @@ export function StatCard({ data }: { data: StatData }) {
             </div>
             
             <div className="flex items-end justify-between">
-                <span className="text-3xl font-semibold text-gray-900">{data.value}</span>
+                <span className="text-3xl font-semibold text-gray-900 truncate pr-2">{data.value}</span>
             </div>
-        </div>
+        </motion.div>
     );
 }

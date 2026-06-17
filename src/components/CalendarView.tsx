@@ -1,52 +1,57 @@
 import { Calendar as CalendarIcon, User } from 'lucide-react';
 import type { LeadData } from '@/types';
 import { formatBookingDateTime } from '@/lib/utils';
+import { motion } from 'motion/react';
 
 export function CalendarView({ leads }: { leads: LeadData[] }) {
-    const bookedLeads = leads
-      .filter(l => l.Name && l["Date Booked"])
-      .map((l, i) => ({
-        id: i,
-        name: l.Name,
-        property: l.Interest || 'N/A',
-        scheduledFor: formatBookingDateTime(l["Date Booked"], l["Time Booked"])
-      }));
+    const getLeadName = (l: LeadData) => l["Full Name"] || l.Name || 'Unknown';
+    const bookedLeads = leads.filter(l => (l.Name || l["Full Name"]) && l["Date Booked"]).map((l, i) => {
+        return {
+            id: i,
+            name: getLeadName(l),
+            property: l.Interest || 'N/A',
+            scheduledFor: formatBookingDateTime(l["Date Booked"], l["Time Booked"])
+        };
+    });
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] w-full">
+        <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white p-6 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+        >
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-base sm:text-lg font-medium text-gray-900 tracking-tight">Scheduled Calls</h2>
+                <h2 className="text-xl font-medium text-gray-900 tracking-tight">Scheduled Calls</h2>
             </div>
 
-            {/* Desktop table view */}
-            <div className="hidden sm:block overflow-x-hidden">
-                <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                         <tr className="bg-[#f8f6f0] text-gray-600 text-xs font-semibold tracking-wide border-b border-[#ebdcb3]/30">
-                            <th className="p-4 rounded-tl-2xl">Lead Name</th>
-                            <th className="p-4">Property Interest</th>
-                            <th className="p-4 rounded-tr-2xl">Scheduled For</th>
+                            <th className="p-4 whitespace-nowrap rounded-tl-2xl">Lead Name</th>
+                            <th className="p-4 whitespace-nowrap">Property Interest</th>
+                            <th className="p-4 whitespace-nowrap rounded-tr-2xl">Scheduled For</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm font-medium text-gray-800 divide-y divide-[#f0ece1]/50">
                         {bookedLeads.length > 0 ? bookedLeads.map((lead) => (
-                            <tr key={lead.id} className="hover:bg-gray-50/50 transition-colors">
-                                <td className="p-4">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                                            <User className="w-4 h-4 text-gray-400" />
-                                        </div>
-                                        <span className="truncate">{lead.name}</span>
+                            <motion.tr 
+                                key={lead.id} 
+                                whileHover={{ backgroundColor: "rgba(249,250,251,1)" }}
+                                className="transition-colors group cursor-pointer"
+                            >
+                                <td className="p-4 font-medium text-gray-900 group-hover:text-[#D4A72C] transition-colors whitespace-nowrap">
+                                    {lead.name}
+                                </td>
+                                <td className="p-4 text-gray-600 group-hover:text-gray-900 transition-colors">{lead.property}</td>
+                                <td className="p-4 whitespace-nowrap">
+                                    <div className="flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+                                        <CalendarIcon className="w-4 h-4 text-gray-400 group-hover:text-[#D4A72C] transition-colors" />
+                                        {lead.scheduledFor}
                                     </div>
                                 </td>
-                                <td className="p-4 text-gray-600 truncate">{lead.property}</td>
-                                <td className="p-4">
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <CalendarIcon className="w-4 h-4 text-gray-400 shrink-0" />
-                                        <span className="truncate">{lead.scheduledFor}</span>
-                                    </div>
-                                </td>
-                            </tr>
+                            </motion.tr>
                         )) : (
                             <tr>
                                 <td colSpan={3} className="p-8 text-center text-gray-500">No scheduled calls found.</td>
@@ -55,27 +60,6 @@ export function CalendarView({ leads }: { leads: LeadData[] }) {
                     </tbody>
                 </table>
             </div>
-
-            {/* Mobile card view */}
-            <div className="sm:hidden space-y-3">
-                {bookedLeads.length > 0 ? bookedLeads.map((lead) => (
-                    <div key={lead.id} className="bg-[#f8f6f0] rounded-2xl p-4">
-                        <div className="flex items-center gap-3 mb-2 min-w-0">
-                            <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
-                                <User className="w-4 h-4 text-gray-400" />
-                            </div>
-                            <p className="text-sm font-semibold text-gray-900 truncate">{lead.name}</p>
-                        </div>
-                        <p className="text-xs text-gray-500 mb-1.5 truncate">{lead.property}</p>
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600 font-medium min-w-0">
-                            <CalendarIcon className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                            <span className="truncate">{lead.scheduledFor}</span>
-                        </div>
-                    </div>
-                )) : (
-                    <p className="text-center text-gray-500 text-sm py-8">No scheduled calls found.</p>
-                )}
-            </div>
-        </div>
+        </motion.div>
     );
 }
