@@ -177,7 +177,7 @@ export default function App() {
            </button>
            <div className="flex items-center gap-2 min-w-0 flex-1">
              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#D4A72C] shrink-0" />
-             <span className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight truncate">AKKA KAPPA GHANA</span>
+             <span className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight">AKKA KAPPA GHANA</span>
            </div>
         </div>
 

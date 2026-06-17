@@ -22,7 +22,7 @@ export function Sidebar({ className, currentView, onViewChange }: { className?: 
                          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#D4A72C] opacity-60" />
                          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#D4A72C] opacity-30" />
                     </div>
-                    <span className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 tracking-tight truncate">AKKA KAPPA GHANA</span>
+                    <span className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 tracking-tight leading-tight">AKKA KAPPA GHANA</span>
                 </div>
                 <button
                     onClick={() => onViewChange(currentView)}
