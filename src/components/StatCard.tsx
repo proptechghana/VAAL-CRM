@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { DollarSign, Users, Phone, Handshake, CheckCircle } from 'lucide-react';
+import { DollarSign, Users, Phone, Handshake, CircleCheck as CheckCircle } from 'lucide-react';
 import type { StatData } from '@/types';
 import { motion } from 'motion/react';
 
@@ -23,21 +23,21 @@ const colorMap = {
 
 export function StatCard({ data }: { data: StatData }) {
     const Icon = iconMap[data.type];
-    
+
     return (
-        <motion.div 
+        <motion.div
             whileHover={{ y: -4 }}
-            className="bg-white p-5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+            className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
         >
-            <div className="flex items-center gap-2 mb-4">
-                <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", colorMap[data.type])}>
-                    <Icon className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <div className={cn("w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0", colorMap[data.type])}>
+                    <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
-                <span className="text-gray-600 text-sm font-medium">{data.title}</span>
+                <span className="text-gray-600 text-xs sm:text-sm font-medium truncate">{data.title}</span>
             </div>
-            
-            <div className="flex items-end justify-between">
-                <span className="text-3xl font-semibold text-gray-900 truncate pr-2">{data.value}</span>
+
+            <div className="flex items-end justify-between min-h-[2rem]">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 truncate pr-2 leading-tight">{data.value}</span>
             </div>
         </motion.div>
     );

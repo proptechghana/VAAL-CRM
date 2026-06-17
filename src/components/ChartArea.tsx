@@ -59,26 +59,26 @@ export function ChartArea({ yearData, monthData }: { yearData: ChartData[], mont
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] h-full flex flex-col group transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <h2 className="text-xl font-medium text-gray-900 tracking-tight">Performance Analytics</h2>
-          <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
-             <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#D4A72C]"></span>
-                Revenue
+    <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F3F3F3] h-full flex flex-col group transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-2 sm:gap-4 sm:gap-6 w-full sm:w-auto">
+          <h2 className="text-lg sm:text-xl font-medium text-gray-900 tracking-tight">Performance Analytics</h2>
+          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-medium text-gray-500">
+             <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#D4A72C] shrink-0"></span>
+                <span>Revenue</span>
              </div>
-             <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F28C28]"></span>
-                Leads
+             <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#F28C28] shrink-0"></span>
+                <span>Leads</span>
              </div>
           </div>
         </div>
         <div className="relative w-full sm:w-auto">
-          <select 
-            value={timeframe} 
+          <select
+            value={timeframe}
             onChange={(e) => setTimeframe(e.target.value as 'year' | 'month')}
-            className="w-full sm:w-auto appearance-none bg-white text-gray-700 text-sm font-medium py-2.5 pl-4 pr-10 rounded-xl outline-none cursor-pointer border border-[#F3F3F3] hover:border-gray-300 transition-colors shadow-sm"
+            className="w-full sm:w-auto appearance-none bg-white text-gray-700 text-sm font-medium py-2.5 pl-4 pr-10 rounded-xl outline-none cursor-pointer border border-[#F3F3F3] hover:border-gray-300 transition-colors shadow-sm min-h-[44px]"
           >
             <option value="year">This Year</option>
             <option value="month">This Month</option>
@@ -87,7 +87,7 @@ export function ChartArea({ yearData, monthData }: { yearData: ChartData[], mont
         </div>
       </div>
 
-      <div className="flex-1 w-full min-h-[200px] mt-4">
+      <div className="flex-1 w-full min-h-[180px] sm:min-h-[200px] mt-2 sm:mt-4">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 25 }}>
             <defs>

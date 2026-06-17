@@ -153,7 +153,7 @@ export default function App() {
     <div className="flex h-screen bg-[#FAF8F3] font-sans selection:bg-[#d4a72c]/30">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -161,8 +161,8 @@ export default function App() {
 
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <Sidebar 
-            className="w-64" 
+        <Sidebar
+            className="w-64"
             currentView={currentView}
             onViewChange={(v) => { setCurrentView(v); setSidebarOpen(false); }}
         />
@@ -171,20 +171,20 @@ export default function App() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
-        <div className="flex items-center gap-4 p-4 lg:hidden bg-[#f8f6f0] border-b border-[#e8e4db]">
-           <button onClick={() => setSidebarOpen(true)} className="p-2 text-gray-600 hover:bg-gray-200 rounded-lg">
-             <Menu className="w-6 h-6" />
+        <div className="flex items-center gap-3 p-3 sm:p-4 lg:hidden bg-[#f8f6f0] border-b border-[#e8e4db]">
+           <button onClick={() => setSidebarOpen(true)} className="p-2 text-gray-600 hover:bg-gray-200 rounded-lg shrink-0" aria-label="Open menu">
+             <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
            </button>
-           <div className="flex items-center gap-2">
-             <div className="w-3 h-3 rounded-full bg-[#D4A72C]" />
-             <span className="text-lg font-semibold text-gray-900 tracking-tight">AKKA KAPPA GHANA</span>
+           <div className="flex items-center gap-2 min-w-0 flex-1">
+             <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#D4A72C] shrink-0" />
+             <span className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight truncate">AKKA KAPPA GHANA</span>
            </div>
         </div>
-        
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 custom-scrollbar">
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-8 custom-scrollbar">
           <div className="max-w-7xl mx-auto xl:px-4">
             {currentView !== 'dashboard' && (
-              <div className="mb-6 lg:mb-8">
+              <div className="mb-4 sm:mb-6 lg:mb-8">
                 <TopBar searchQuery={searchQuery} onSearchQueryChange={setSearchQuery} />
               </div>
             )}
@@ -198,18 +198,18 @@ export default function App() {
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               >
                 {currentView === 'dashboard' && (
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6">
                         <div>
-                          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight mb-6">Dashboard Overview</h1>
-                          
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl">
+                          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight mb-4 sm:mb-6">Dashboard Overview</h1>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                             {stats.map((stat, i) => (
                               <StatCard key={i} data={stat} />
                             ))}
                           </div>
                         </div>
 
-                        <div className="h-[300px] sm:h-[400px]">
+                        <div className="h-[280px] sm:h-[300px] lg:h-[400px]">
                           <ChartArea yearData={monthsData} monthData={currentMonthData} />
                         </div>
 
@@ -230,7 +230,7 @@ export default function App() {
                 )}
               </motion.div>
             </AnimatePresence>
-            
+
           </div>
         </main>
       </div>
